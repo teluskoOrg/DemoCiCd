@@ -36,66 +36,39 @@
 
 
 
-
-#version: 0.2
-#
-#phases:
-#  install:
-#    commands:
-#      - echo Installing Maven...
-#      - mvn -v
-#
-#  pre_build:
-#    commands:
-#      - echo Logging in to Amazon ECR...
-#      - aws --version
-#      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 661988665019.dkr.ecr.ap-south-1.amazonaws.com
-#      - IMAGE_TAG=latest
-#      - REPOSITORY_URI=661988665019.dkr.ecr.ap-south-1.amazonaws.com/democicdapp
-#
-#  build:
-#    commands:
-#      - echo Running unit tests...
-#      - ./mvnw clean test
-#      - echo Tests completed successfully ✅
-#      - echo Building Docker image...
-#      - docker build -t democicdapp .
-#      - docker tag democicdapp:latest $REPOSITORY_URI:$IMAGE_TAG
-#
-#  post_build:
-#    commands:
-#      - echo Pushing Docker image to ECR...
-#      - docker push $REPOSITORY_URI:$IMAGE_TAG
-#      - echo Creating imagedefinitions.json...
-#      - printf '[{"name":"democicdapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-#
-#artifacts:
-#  files:
-#    - imagedefinitions.json
-
-
 version: 0.2
 
 phases:
+  install:
+    runtime-versions:
+      java: corretto21
+    commands:
+      - echo "Installing Maven dependencies"
+      - ./mvnw clean install -DskipTests
+
   pre_build:
     commands:
+      - echo "Running Maven tests"
+      - ./mvnw test
+      - echo "Tests completed successfully"
       - echo Logging in to Amazon ECR...
-      - aws --version
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 661988665019.dkr.ecr.ap-south-1.amazonaws.com
       - IMAGE_TAG=latest
       - REPOSITORY_URI=661988665019.dkr.ecr.ap-south-1.amazonaws.com/democicdapp
+
   build:
     commands:
-      - echo Running unit tests...
-      - ./mvnw clean test
+      - echo Build started on `date`
       - echo Building Docker image...
       - docker build -t democicdapp .
       - docker tag democicdapp:latest $REPOSITORY_URI:$IMAGE_TAG
+
   post_build:
     commands:
-      - echo Pushing to ECR...
+      - echo Build completed on `date`
+      - echo Pushing Docker image to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing imagedefinitions.json...
+      - echo Creating imagedefinitions.json...
       - printf '[{"name":"democicdapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
