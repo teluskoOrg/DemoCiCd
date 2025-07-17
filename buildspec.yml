@@ -1,6 +1,11 @@
 version: 0.2
 
 phases:
+  install:
+    commands:
+      - echo Installing Maven...
+      - mvn -version || yum install -y maven
+
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
@@ -12,20 +17,17 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Compiling the project...
+      - echo Compiling project...
       - ./mvnw clean compile
-
-  test:
-    commands:
       - echo Running unit tests...
       - ./mvnw test
+      - echo Building Docker image...
+      - docker build -t democicdapp .
+      - docker tag democicdapp:latest $REPOSITORY_URI:$IMAGE_TAG
 
   post_build:
     commands:
       - echo Build completed on `date`
-      - echo Building Docker image...
-      - docker build -t democicdapp .
-      - docker tag democicdapp:latest $REPOSITORY_URI:$IMAGE_TAG
       - echo Pushing Docker image to ECR...
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Creating imagedefinitions.json...
