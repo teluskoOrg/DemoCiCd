@@ -10,6 +10,9 @@ phases:
 
   pre_build:
     commands:
+      - echo "Running Maven tests"
+      - ./mvnw test
+      - echo "Tests completed successfully"
       - echo Logging in to Amazon ECR...
       - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 661988665019.dkr.ecr.ap-south-1.amazonaws.com
       - IMAGE_TAG=latest
