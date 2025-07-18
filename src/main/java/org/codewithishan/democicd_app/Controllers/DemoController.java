@@ -13,7 +13,7 @@ public class DemoController {
     public String getVersion()
     {
 
-        return " Version Of App : V1 ";
+        return " Version Of App : V2 ";
 
 
 
