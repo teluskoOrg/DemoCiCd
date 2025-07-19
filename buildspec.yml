@@ -1,3 +1,14 @@
+# This File is Used by Aws Code Build service to compile and build the
+#Dockerise App code build use this in aws code pipeline we have mentioned our workflow
+# you can use Aws Code pipeline only  if you are using ecr or docker based deployment
+#Aws provide more easy and abstraced service for Begginer developer
+
+#Entire workflow can be done in simpler manner
+
+# IF   YOU USE THE AWS CODE PIPELINE FOR ENTIRE WORKFLOW YOU WILL NOT GET MORE FINE GAINED CONTROLL
+
+# Rest entire thing you have to think according to your usecase
+
 version: 0.2
 
 phases:
@@ -36,44 +47,3 @@ phases:
 artifacts:
   files:
     - imagedefinitions.json
-
-
-
-#version: 0.2
-#
-#phases:
-#  install:
-#    runtime-versions:
-#      java: corretto21
-#    commands:
-#      - echo "Installing Maven dependencies"
-#      - ./mvnw clean install -DskipTests
-#
-#  pre_build:
-#    commands:
-#      - echo "Running Maven tests"
-#      - ./mvnw test
-#      - echo "Tests completed successfully"
-#      - echo Logging in to Amazon ECR...
-#      - aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 661988665019.dkr.ecr.ap-south-1.amazonaws.com
-#      - IMAGE_TAG=latest
-#      - REPOSITORY_URI=661988665019.dkr.ecr.ap-south-1.amazonaws.com/democicdapp
-#
-#  build:
-#    commands:
-#      - echo Build started on `date`
-#      - echo Building Docker image...
-#      - docker build -t democicdapp .
-#      - docker tag democicdapp:latest $REPOSITORY_URI:$IMAGE_TAG
-#
-#  post_build:
-#    commands:
-#      - echo Build completed on `date`
-#      - echo Pushing Docker image to ECR...
-#      - docker push $REPOSITORY_URI:$IMAGE_TAG
-#      - echo Creating imagedefinitions.json...
-#      - printf '[{"name":"democicdapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-#
-#artifacts:
-#  files:
-#    - imagedefinitions.json
